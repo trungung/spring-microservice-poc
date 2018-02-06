@@ -12,14 +12,18 @@ node {
   stage('Build') { 
     // Run the maven build
     if (isUnix()) {
-      sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package"
+      sh "'${mvnHome}/bin/mvn' -Dmaven.test.failure.ignore clean package docker:build"
     } else {
-      bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package/)
+      bat(/"${mvnHome}\bin\mvn" -Dmaven.test.failure.ignore clean package docker:build/)
     }
   }
   stage('Build Docker Image') {
     steps {
-      docker.build("trungung/docker-jenkins-pipeline:${env.BUILD_NUMBER}")
+
+      dir ('sample-ping') {
+        def app = docker.build "localhost:5000/sample-ping:${env.version}"
+        app.push()
+      }
     }
   }
   stage('Test'){
