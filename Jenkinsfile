@@ -18,12 +18,9 @@ node {
     }
   }
   stage('Build Docker Image') {
-    steps {
-
-      dir ('sample-ping') {
-        def app = docker.build "localhost:5000/sample-ping:${env.version}"
-        app.push()
-      }
+    dir ('sample-ping') {
+      def app = docker.build "localhost:5000/sample-ping:${env.version}"
+      app.push()
     }
   }
   stage('Test'){
